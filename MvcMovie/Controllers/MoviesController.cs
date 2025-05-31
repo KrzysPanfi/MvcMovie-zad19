@@ -19,13 +19,20 @@ namespace MvcMovie.Controllers
             _context = context;
         }
 
-        // GET: Movies
-        public async Task<IActionResult> Index()
+        // GET: Movies 
+        public async Task<IActionResult> Index(string id)
         {
-              return _context.Movie != null ? 
-                          View(await _context.Movie.ToListAsync()) :
-                          Problem("Entity set 'MvcMovieContext.Movie'  is null.");
+            var movies = from m in _context.Movie
+                         select m;
+
+            if (!String.IsNullOrEmpty(id))
+            {
+                movies = movies.Where(s => s.Title!.Contains(id));
+            }
+
+            return View(await movies.ToListAsync());
         }
+
 
         // GET: Movies/Details/5
         public async Task<IActionResult> Details(int? id)
